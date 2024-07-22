@@ -3,7 +3,7 @@
 --[[
 Author(s)   : Parihsz
 Date        : 07/21/2024
-Version     : 1.1.0
+Version     : 1.1.1
 
 Description : This module provides a lightweight state machine implementation for managing the states and transitions
               of entities.
@@ -213,7 +213,7 @@ if isServer then
 				stateTransitionRemote:FireAllClients(name, stateName, entity)
 			end
 		else
-			warn("Missing StateMachine for server:", name, player)
+			warn(`Missing StateMachine for server: {name}, {player}`)
 		end
 	end)
 else
@@ -222,7 +222,7 @@ else
 		if stateMachine then
 			stateMachine:ForceState(stateName, entity, true)
 		else
-			warn("Missing StateMachine on client:", name)
+			warn(`Missing StateMachine on client: {name}`)
 		end
 	end)
 
@@ -232,7 +232,7 @@ else
 			stateMachine.replicateToClients = replicateToClients
 			stateMachine.replicateToServer = replicateToServer
 		else
-			warn("Missing StateMachine on client:", name)
+			warn(`Missing StateMachine on client: {name}`)
 		end
 	end)
 end
