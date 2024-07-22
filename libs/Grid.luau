@@ -10,6 +10,8 @@ Description : This script manages various entity positions on a grid using spati
               to efficiently update, query, and manage the grid. Entities such as players, NPCs, and other 
               models can be tracked and queried selectively by type.
 ]]
+local Grid = {}
+
 local Workspace = game:GetService("Workspace")
 
 local GRID_SIZE = 50
@@ -19,9 +21,9 @@ local SHOULD_VISUALIZE = true
 local lastPositions = {}
 local lastUpdate = 0
 
-local Grid = {}
 Grid.grid = {}
 Grid.entities = {}
+
 local entityColors = {}
 
 --[[
