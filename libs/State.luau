@@ -3,7 +3,7 @@
 --[[
 Author(s)   : Parihsz
 Date        : 07/21/2024
-Version     : 1.1.1
+Version     : 1.1.2
 
 Description : This module provides a lightweight state machine implementation for managing the states and transitions
               of entities.
@@ -33,7 +33,6 @@ type StateMachine = {
 	Transition: (self: StateMachine, stateName: string, entity: any, networked: boolean?) -> (),
 	GetState: (self: StateMachine) -> string?,
 	Update: (self: StateMachine, entity: any) -> (),
-	ForceState: (self: StateMachine, stateName: string, entity: any, networked: boolean?) -> (),
 	SetReplication: (self: StateMachine, replicateToClients: boolean, replicateToServer: boolean) -> (),
 }
 
@@ -105,7 +104,7 @@ function State.CreateMachine(name: string, states: { [string]: StateConfig }?): 
             @param entity any | The entity to pass to state callbacks.
             @param networked boolean? | Whether this transition was triggered by a network event.
 
-            Transitions the state machine to a specified state, calling the OnExit callback
+            Transitions the state machine to the specified state, calling the OnExit callback
             of the current state and the OnEnter callback of the new state. If `networked` is false or nil,
             it sends the transition event to other clients/servers.
         ]]
@@ -118,6 +117,8 @@ function State.CreateMachine(name: string, states: { [string]: StateConfig }?): 
 				if OnExit then
 					OnExit(entity)
 				end
+			else
+				warn("Already in this state!")
 			end
 
 			self.currentState = stateName
@@ -130,34 +131,6 @@ function State.CreateMachine(name: string, states: { [string]: StateConfig }?): 
 				elseif isClient and self.replicateToServer then
 					stateTransitionRemote:FireServer(self.name, stateName, entity)
 				end
-			end
-		end,
-
-		--[[
-            @param self StateMachine | The state machine instance.
-            @param stateName string | The name of the state to transition to.
-            @param entity any | The entity to pass to state callbacks.
-			@param networked boolean? | Whether this transition was triggered by a network event.
-
-            Forces the state machine to the specified state without any checks.
-        ]]
-		ForceState = function(self, stateName, entity, networked)
-			local state = self.states[stateName]
-			assert(state ~= nil, `State {stateName} does not exist.`)
-
-			if self.currentState then
-				local OnExit = self.states[self.currentState].OnExit
-				if OnExit then
-					OnExit(entity)
-				end
-			end
-
-			self.currentState = stateName
-			self.currentStateConfig = state
-			state.OnEnter(entity)
-
-			if not networked and isServer and self.replicateToClients then
-				stateTransitionRemote:FireAllClients(self.name, stateName, entity)
 			end
 		end,
 
@@ -220,7 +193,7 @@ else
 	stateTransitionRemote.OnClientEvent:Connect(function(name, stateName, entity)
 		local stateMachine = State.activeStateMachines[name]
 		if stateMachine then
-			stateMachine:ForceState(stateName, entity, true)
+			stateMachine:Transition(stateName, entity, true)
 		else
 			warn(`Missing StateMachine on client: {name}`)
 		end
