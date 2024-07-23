@@ -130,14 +130,11 @@ end
 ]]
 local function QueryGrid(position: Vector3, range: number, entityTypes: { string }?): { any }
 	Grid.UpdateGrid()
-
 	local rangeInCells = math.ceil(range / GRID_SIZE)
 	local hash = HashPosition(position)
 	local startX, startZ = hash.X - rangeInCells, hash.Z - rangeInCells
 	local endX, endZ = hash.X + rangeInCells, hash.Z + rangeInCells
-
 	local nearbyEntities = {}
-
 	for xCell = startX, endX do
 		for zCell = startZ, endZ do
 			local cellKey = Vector3.new(xCell, 0, zCell)
@@ -146,20 +143,26 @@ local function QueryGrid(position: Vector3, range: number, entityTypes: { string
 				if entityTypes then
 					for _, entityType in entityTypes do
 						if cell[entityType] then
-							table.move(cell[entityType], 1, #cell[entityType], #nearbyEntities + 1, nearbyEntities)
+							for _, entity in cell[entityType] do
+								if (entity:GetPivot().Position - position).Magnitude <= range then
+									table.insert(nearbyEntities, entity)
+								end
+							end
 						end
 					end
 				else
 					for _, entities in cell do
-						table.move(entities, 1, #entities, #nearbyEntities + 1, nearbyEntities)
+						for _, entity in entities do
+							if (entity:GetPivot().Position - position).Magnitude <= range then
+								table.insert(nearbyEntities, entity)
+							end
+						end
 					end
 				end
 			end
 		end
 	end
-
 	VisualizeGrid()
-
 	return nearbyEntities
 end
 
