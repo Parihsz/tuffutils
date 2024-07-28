@@ -6,7 +6,6 @@ This module manages various entity positions on a grid using spatial hashing. It
 
 - `GRID_SIZE` - The size of each grid cell.
 - `UPDATE_INTERVAL` - The interval at which the grid is updated.
-- `SHOULD_VISUALIZE` - Boolean indicating whether to visualize the grid.
 
 ## Properties
 
