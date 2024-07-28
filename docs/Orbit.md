@@ -1,7 +1,7 @@
-## Orbit 
+# Orbit 
 This module manages `Dot` objects, which are 3D points projected onto a 2D GUI. Each Dot orbits around a central GUI element, with parameters such as size, speed, and perspective affecting its behavior.
 
-### Interfaces
+### Types
 
 #### `DotType`
 Defines properties and behaviors of a Dot within its orbit.

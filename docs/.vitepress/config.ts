@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 function sidebar() {
   return [
-    { text: 'Dot', link: '/Dot' },
+    { text: 'Orbit', link: '/Orbit' },
     { text: 'Grid', link: '/Grid' },
     { text: 'State', link: '/State' },
     { text: 'Quest', link: '/Quest' },
