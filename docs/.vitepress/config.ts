@@ -11,6 +11,7 @@ function sidebar() {
 }
 
 export default defineConfig({
+  base: '/RobloxLibs/',
   title: 'RobloxLibs',
   description: 'A collection of libraries to speed up roblox development.',
   lang: 'en-US',
