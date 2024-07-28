@@ -1,1 +1,4 @@
 selene.toml
+node_modules/
+docs/.vitepress/dist
+docs/.vitepress/cache

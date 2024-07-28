@@ -1,14 +1,5 @@
 local TweenService = game:GetService("TweenService")
 
---[[
-Author(s)   : Parihsz
-Date        : 07/21/2024
-Version     : 1.0.0
-
-Description : Utility module for creating and managing tweens for UI elements. Includes preset animations such as 
-              hover, pop-out, rotate, move, show, hide, scale-up, and scale-down.
-]]
-
 export type TweenOptions = {
 	duration: number?,
 	easingStyle: Enum.EasingStyle?,
@@ -19,14 +10,6 @@ export type TweenProperties = { [string]: any }
 
 local Util = {}
 
---[[
-    @param instance Instance | The instance to tween.
-    @param properties TweenProperties | The properties to tween.
-    @param options TweenOptions? | Optional. The tween options including duration, easing style, and direction.
-    @return Tween | The created tween.
-
-    Creates a tween for the given instance with specified properties and options.
-]]
 function Util.Tween(instance: Instance, properties: TweenProperties, options: TweenOptions?): Tween
 	local tweenInfo = TweenInfo.new(
 		options and options.duration or 0.3,
@@ -36,11 +19,6 @@ function Util.Tween(instance: Instance, properties: TweenProperties, options: Tw
 	return TweenService:Create(instance, tweenInfo, properties)
 end
 
---[[
-    @param tweens { Tween } | The list of tweens to play.
-
-    Plays all the tweens in the given list.
-]]
 function Util.Play(tweens: { Tween })
 	for _, tween in tweens do
 		tween:Play()
@@ -48,14 +26,6 @@ function Util.Play(tweens: { Tween })
 end
 
 Util.Presets = {
-	--[[
-        @param instances { GuiObject } | The list of UI elements to apply hover effect.
-        @param hoverSizeGain number | The size gain when hovering.
-        @param options TweenOptions? | Optional. The tween options including duration, easing style, and direction.
-        @return { hover: { Tween }, unhover: { Tween } } | The hover and unhover tweens.
-
-        Creates hover and unhover tweens for the given UI elements.
-    ]]
 	Hover = function(
 		instances: { GuiObject },
 		hoverSizeGain: number,
@@ -83,13 +53,6 @@ Util.Presets = {
 		return { hover = hoverTweens, unhover = unhoverTweens }
 	end,
 
-	--[[
-        @param instances { GuiObject } | The list of UI elements to apply pop-out effect.
-        @param options TweenOptions? | Optional. The tween options including duration, easing style, and direction.
-        @return { Tween } | The pop-out tweens.
-
-        Creates pop-out tweens for the given UI elements.
-    ]]
 	PopOut = function(instances: { GuiObject }, options: TweenOptions?): { Tween }
 		local tweens = {}
 		for _, instance in instances do
@@ -113,14 +76,6 @@ Util.Presets = {
 		return tweens
 	end,
 
-	--[[
-        @param instance GuiObject | The UI element to rotate.
-        @param targetAngle number | The target rotation angle.
-        @param options TweenOptions? | Optional. The tween options including duration, easing style, and direction.
-        @return Tween | The rotation tween.
-
-        Creates a rotation tween for the given UI element.
-    ]]
 	Rotate = function(instance: GuiObject, targetAngle: number, options: TweenOptions?): Tween
 		assert(instance:IsA("GuiObject"), "Instance must be a GuiObject")
 
@@ -131,14 +86,6 @@ Util.Presets = {
 		})
 	end,
 
-	--[[
-        @param instance GuiObject | The UI element to move.
-        @param targetPosition UDim2 | The target position.
-        @param options TweenOptions? | Optional. The tween options including duration, easing style, and direction.
-        @return Tween | The move tween.
-
-        Creates a move tween for the given UI element.
-    ]]
 	Move = function(instance: GuiObject, targetPosition: UDim2, options: TweenOptions?): Tween
 		assert(instance:IsA("GuiObject"), "Instance must be a GuiObject")
 
@@ -149,13 +96,6 @@ Util.Presets = {
 		})
 	end,
 
-	--[[
-        @param instance GuiObject | The UI element to show.
-        @param options TweenOptions? | Optional. The tween options including duration, easing style, and direction.
-        @return Tween | The show tween.
-
-        Creates a show tween for the given UI element.
-    ]]
 	Show = function(instance: GuiObject, options: TweenOptions?): Tween
 		assert(instance:IsA("GuiObject"), "Instance must be a GuiObject")
 
@@ -168,13 +108,6 @@ Util.Presets = {
 		})
 	end,
 
-	--[[
-        @param instance GuiObject | The UI element to hide.
-        @param options TweenOptions? | Optional. The tween options including duration, easing style, and direction.
-        @return Tween | The hide tween.
-
-        Creates a hide tween for the given UI element.
-    ]]
 	Hide = function(instance: GuiObject, options: TweenOptions?): Tween
 		assert(instance:IsA("GuiObject"), "Instance must be a GuiObject")
 
@@ -187,14 +120,6 @@ Util.Presets = {
 		return Util.Tween(instance, { BackgroundTransparency = 1 }, finalOptions)
 	end,
 
-	--[[
-        @param instance GuiObject | The UI element to scale up.
-        @param scaleGain number | The amount to scale up.
-        @param options TweenOptions? | Optional. The tween options including duration, easing style, and direction.
-        @return Tween | The scale-up tween.
-
-        Creates a scale-up tween for the given UI element.
-    ]]
 	ScaleUp = function(instance: GuiObject, scaleGain: number, options: TweenOptions?): Tween
 		assert(instance:IsA("GuiObject"), "Instance must be a GuiObject")
 
@@ -208,14 +133,6 @@ Util.Presets = {
 		})
 	end,
 
-	--[[
-        @param instance GuiObject | The UI element to scale down.
-        @param scaleLoss number | The amount to scale down.
-        @param options TweenOptions? | Optional. The tween options including duration, easing style, and direction.
-        @return Tween | The scale-down tween.
-
-        Creates a scale-down tween for the given UI element.
-    ]]
 	ScaleDown = function(instance: GuiObject, scaleLoss: number, options: TweenOptions?): Tween
 		assert(instance:IsA("GuiObject"), "Instance must be a GuiObject")
 
