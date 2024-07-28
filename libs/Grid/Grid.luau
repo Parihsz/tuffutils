@@ -9,8 +9,8 @@ local UPDATE_INTERVAL = 2
 local lastPositions = {}
 local lastUpdate = 0
 
-Grid.grid = {}
-Grid.entities = {}
+local grid = {}
+local entities = {}
 
 function Grid.HashPosition(position: Vector3): Vector3
 	return Vector3.new(position.X // GRID_SIZE + 0.5, 0, position.Z // GRID_SIZE + 0.5)
@@ -22,28 +22,29 @@ function Grid.UpdateGrid()
 		return
 	end
 
-	for entity: any, entityType in Grid.entities do
+	for entity: any, entityType in entities do
 		local position = entity:GetPivot().Position
 		local hash = Grid.HashPosition(position)
 		local lastHash = lastPositions[entity]
 
 		if lastHash ~= hash then
 			if lastHash then
-				local oldCell = Grid.grid[lastHash]
+				local oldCell = grid[lastHash]
 				if oldCell then
 					table.remove(oldCell[entityType], table.find(oldCell[entityType], entity))
-					if next(oldCell[entityType]) == nil then
+					if #oldCell[entityType] == 0 then
 						oldCell[entityType] = nil
 					end
-					if next(oldCell) == nil then
-						Grid.grid[lastHash] = nil
+					if #oldCell == 0 then
+						grid[lastHash] = nil
 					end
 				end
 			end
 
-			local cell = Grid.grid[hash] or {}
+			local cell = grid[hash] or {}
 			cell[entityType] = cell[entityType] or {}
-			Grid.grid[hash] = cell
+			grid[hash] = cell
+
 			table.insert(cell[entityType], entity)
 			lastPositions[entity] = hash
 		end
@@ -60,8 +61,8 @@ local function QueryGrid(position: Vector3, range: number, entityTypes: { string
 	local endX, endZ = hash.X + rangeInCells, hash.Z + rangeInCells
 	local nearbyEntities = {}
 
-	local function ProcessEntities(entities)
-		for _, entity in entities do
+	local function ProcessEntities(entitiesTable)
+		for _, entity in entitiesTable do
 			if (entity:GetPivot().Position - position).Magnitude <= range then
 				table.insert(nearbyEntities, entity)
 			end
@@ -71,7 +72,7 @@ local function QueryGrid(position: Vector3, range: number, entityTypes: { string
 	for xCell = startX, endX do
 		for zCell = startZ, endZ do
 			local cellKey = Vector3.new(xCell, 0, zCell)
-			local cell = Grid.grid[cellKey]
+			local cell = grid[cellKey]
 			if cell then
 				if entityTypes then
 					for _, entityType in entityTypes do
@@ -80,8 +81,8 @@ local function QueryGrid(position: Vector3, range: number, entityTypes: { string
 						end
 					end
 				else
-					for _, entities in cell do
-						ProcessEntities(entities)
+					for _, entityGroup in cell do
+						ProcessEntities(entityGroup)
 					end
 				end
 			end
@@ -92,11 +93,11 @@ local function QueryGrid(position: Vector3, range: number, entityTypes: { string
 end
 
 function Grid.AddEntity(entity: Model, entityType: string)
-	Grid.entities[entity] = entityType
+	entities[entity] = entityType
 end
 
 function Grid.RemoveEntity(entity: Model)
-	Grid.entities[entity] = nil
+	entities[entity] = nil
 	lastPositions[entity] = nil
 end
 
