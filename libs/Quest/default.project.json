@@ -1,0 +1,6 @@
+{
+	"name": "Quest",
+	"tree": {
+		"$path": "Quest.luau"
+	}
+}

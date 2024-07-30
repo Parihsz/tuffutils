@@ -1,4 +1,4 @@
-local Signal = require(script.Parent.Parent.Signal)
+local Signal = require(script.Parent.Signal)
 
 type BinItem = Instance | RBXScriptConnection | () -> ...any
 
