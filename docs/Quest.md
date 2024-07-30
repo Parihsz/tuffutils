@@ -81,15 +81,15 @@ Creates a new quest instance with the specified parameters.
 
 ```lua
 local Players = game:GetService("Players")
-local NewQuest = require(Quest)
+local Quest = require(Quest)
 local QuestUtil = require(QuestUtil)
 
 local function KillBanditsQuest(player)
-	local rewards: { NewQuest.Rewards } = {
+	local rewards: { Quest.Rewards } = {
 		QuestUtil.Rewards.GiveCredits("Get 100 Credits", 100),
 	}
 
-	local quest = NewQuest("Kill the Bandits!", 1, rewards, workspace.FrescoAI, function(QuestData, binAdd)
+	local quest = Quest.NewQuest("Kill the Bandits!", 1, rewards, workspace.FrescoAI, function(QuestData, binAdd)
 		binAdd(QuestUtil.MobKilled:Connect(function(_killedMob, _killer)
 			QuestData.UpdateProgress(QuestData.progress + 1)
 		end))
