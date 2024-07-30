@@ -18,7 +18,7 @@ type QuestData = {
 	rewards: { Rewards },
 	npc: Instance?,
 	connections: { RBXScriptConnection },
-	progressChanged: Signal.Signal<number>,
+	ProgressChanged: Signal.Signal<number>,
 	UpdateProgress: (number) -> (),
 }
 
@@ -103,7 +103,7 @@ local function NewQuest(
 			rewards = rewards,
 			npc = npc,
 			connections = {},
-			progressChanged = progressChanged,
+			ProgressChanged = progressChanged,
 			UpdateProgress = UpdateProgress,
 		}
 

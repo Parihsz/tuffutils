@@ -89,9 +89,9 @@ local function KillBanditsQuest(player)
 		QuestUtil.Rewards.GiveCredits("Get 100 Credits", 100),
 	}
 
-	local quest = Quest.NewQuest("Kill the Bandits!", 1, rewards, workspace.FrescoAI, function(QuestData, binAdd)
+	local quest = Quest.NewQuest("Kill the Bandits!", 1, rewards, workspace.FrescoAI, function(questData, binAdd)
 		binAdd(QuestUtil.MobKilled:Connect(function(_killedMob, _killer)
-			QuestData.UpdateProgress(QuestData.progress + 1)
+			questData.UpdateProgress(questData.progress + 1)
 		end))
 	end)
 
@@ -101,7 +101,7 @@ end
 Players.PlayerAdded:Connect(function(player)
 	local quest = KillBanditsQuest(player)
 	quest.Start()
-	quest.data.progressChanged:Connect(function(progress)
+	quest.data.ProgressChanged:Connect(function(progress)
 		if progress >= quest.data.target then
 			quest.Complete()
 		end
