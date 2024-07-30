@@ -18,7 +18,7 @@ type QuestData = {
 	rewards: { Rewards },
 	npc: Instance?,
 	connections: { RBXScriptConnection },
-	progressChanged: Signal<number>,
+	progressChanged: Signal.Signal<number>,
 	UpdateProgress: (number) -> (),
 }
 
@@ -58,7 +58,7 @@ local function NewQuest(
 	Initialize: (QuestData, (any) -> ()) -> ()
 ): (Player) -> Quest
 	return function(player: Player): Quest
-		local progressChanged = Signal.new()
+		local progressChanged = Signal()
 
 		local Add, Clear = CreateBin()
 
