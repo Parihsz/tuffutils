@@ -56,13 +56,13 @@ Creates a new state machine with the specified parameters.
 ### Creating a New State Machine
 
 ```lua
-local function InitializeStateMachine()
-	local fsm = StateMachine.CreateMachine("CombatAI")
+local function InitializeStateMachine(ID: string)
+	local fsm = StateMachine.CreateMachine(ID)
 
 	fsm:State({
 		Name = "Passive",
 		OnEnter = StateFunctions.PassiveOnEnter,
-		Update = StateFunctions.PassiveUpdate,
+		Update = StateFunctions.PassiveUpdate, -- Update runs every heartbeat internally from the State library.
 	})
 
 	fsm:State({
@@ -80,4 +80,19 @@ local function InitializeStateMachine()
 
 	return fsm
 end
+
+local ai = {
+	ID = "a-b-c",
+	fsm = InitializeStateMachine(ID),
+	model = workspace.AI
+}
+
+ai:SetReplication(true) -- This sets the replication from server -> client to true. Meaning when the state changes on the server, it will sync the state machine with the same ID on the client.
+
+ai:SetReplication(false, true) -- This sets replication from client -> server to true. Same deal.
+
+--Note that, replication can only be set from the server.
+
+ai.fsm:Transition("Attacking", ai.model)
+--Transition will call the mandatory OnEnter function you provide in the init.
 ```
