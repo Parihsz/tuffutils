@@ -45,10 +45,12 @@ local part = Instance.new("Part")
 part.Parent = workspace
 
 local tween = Tween.Tween(part, { Transparency = 0.5 }, { duration = 1 })
+--This works like any other tween created via TweenService, the main point is it being less verbose with more optional fields.
 tween:Play()
 
 local button = script.Parent
 
+--The hover preset is a bit different from the rest in that it returns a Hover and UnHover tween inside a table.
 local hoverTweens = Tween.Presets.Hover({ button }, 0.1, { duration = 0.2 })
 
 button.MouseEnter:Connect(function()
@@ -58,6 +60,10 @@ end)
 button.MouseLeave:Connect(function()
     Tween.Play(hoverTweens.unhover)
 end)
+
+--An example of another preset.
+local rotation = Util.Presets.Rotate(parentFrame, targetAngle)
+rotation:Play()
 ```
 
 ## Presets

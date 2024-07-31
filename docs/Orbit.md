@@ -50,6 +50,8 @@ local dot = Orbit.new(uiElement, 1, centralUI, 1.5, 2, 1, 0.8, 5)
 
 game:GetService("RunService").RenderStepped:Connect(function(deltaTime)
     local hovering = IsHovering(uiElement)
+    --hovering is something you detect, and orbit provides methods that lets you pause the orbit based on that.
+    --if hovering isn't something you're interested in you can simply name it to something like "stop" 
     dot:Project(deltaTime, hovering)
 end)
 ```

@@ -82,7 +82,7 @@ Creates a new quest instance with the specified parameters.
 ```lua
 local Players = game:GetService("Players")
 local Quest = require(Quest)
-local QuestUtil = require(QuestUtil)
+local QuestUtil = require(QuestUtil) --Quest util is ideally something you have in your game, with a bunch of utility functions and signals. 
 
 local function KillBanditsQuest(player)
 	local rewards: { Quest.Rewards } = {
@@ -90,7 +90,7 @@ local function KillBanditsQuest(player)
 	}
 
 	local quest = Quest.NewQuest("Kill the Bandits!", 1, rewards, workspace.FrescoAI, function(questData, binAdd)
-		binAdd(QuestUtil.MobKilled:Connect(function(_killedMob, _killer)
+		binAdd(QuestUtil.MobKilled:Connect(function(_killedMob, _killer) 
 			questData.UpdateProgress(questData.progress + 1)
 		end))
 	end)
@@ -101,9 +101,9 @@ end
 Players.PlayerAdded:Connect(function(player)
 	local quest = KillBanditsQuest(player)
 	quest.Start()
-	quest.data.ProgressChanged:Connect(function(progress)
+	quest.data.ProgressChanged:Connect(function(progress) --Quest exposes a progress changed signal that will only fire if you use the quest's mutator method.
 		if progress >= quest.data.target then
-			quest.Complete()
+			quest.Complete() -- completion is not automatically detected as some people want players to "return" their quests.
 		end
 	end)
 end)
