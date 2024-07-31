@@ -18,7 +18,7 @@ local grid: Grid = {}
 local entities: Entities = {}
 
 function Grid.HashPosition(position: Vector3): Vector3
-	return Vector3.new(position.X // GRID_SIZE + 0.5), 0, position.Z // GRID_SIZE + 0.5)
+	return Vector3.new(position.X // GRID_SIZE + 0.5, 0, position.Z // GRID_SIZE + 0.5)
 end
 
 function Grid.UpdateGrid()
@@ -38,7 +38,7 @@ function Grid.UpdateGrid()
 
 		if lastHash then
 			local oldCell: GridCell? = grid[lastHash]
-			
+
 			if oldCell then
 				local index: number? = table.find(oldCell[entityType], entity)
 				if index then
