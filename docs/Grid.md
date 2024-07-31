@@ -86,8 +86,13 @@ local npcModel = workspace.NPCModel
 Grid.AddEntity(playerModel, "players")
 Grid.AddEntity(npcModel, "ais")
 
-local nearbyEntities = Grid.GetNearbyEntities(playerModel, 100, { "players", "ais" })
+local nearbyEntities = Grid.GetNearbyEntities(playerModel, 100, { "players", "ais" }) --gets nearby players AND ais
 for _, entity in nearbyEntities do
-    print(entity.Name)
+    print(entity.Name) 
+end
+
+local nearbyPlayers = Grid.GetNearbyEntities(playerModel, 100, { "players" }) --gets nearby players only
+for _, player: Model in nearbyPlayers do --keep in mind this function returns the characters
+    print(player.Name) 
 end
 ```
