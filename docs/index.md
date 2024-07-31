@@ -25,17 +25,16 @@ features:
     title: Quest
     details: Manages quests for players, supporting progress tracking and completion.
     link: /Quest
-  - icon: 🍃
-    title: Tween
-    details: Utility module for creating and managing tweens for UI elements.
-    link: /Tween
   - icon: ⚡
     title: Test
     details: Library to test, check, benchmark and race your functions.
     link: /Test
+  - icon: 🍃
+    title: Tween
+    details: Utility module for creating and managing tweens for UI elements.
+    link: /Tween
   - icon: ☄️
     title: Orbit
     details: Manages the projection of 2D GUI objects in a dynamic orbital pattern around a central GUI element.
     link: /Orbit
-
 ---
