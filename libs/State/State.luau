@@ -1,6 +1,3 @@
---!native
---!optimize 2
-
 local StateModule = {}
 
 local RunService = game:GetService("RunService")
