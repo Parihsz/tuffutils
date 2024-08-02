@@ -1,6 +1,6 @@
 # Grid
 
-This module manages various entity positions on a grid using spatial hashing. It provides functions to efficiently update, query, and manage the grid. Entities such as players, NPCs, and other models can be tracked and queried selectively by type.
+This module manages various entity positions on a grid using spatial hashing. It provides methods efficiently update, query, and manage the grid. Helper methods allow you to quickly query the grid selectively by type. It is recommended that you use a registry module to manage your entities and add to the grid. 
 
 ## Constants
 

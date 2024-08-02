@@ -1,6 +1,8 @@
 # State
 
-This module provides a lightweight state machine implementation for managing the states and transitions of entities. It includes networking functionality to synchronize state transitions across server and clients. State machines are referenced by name and have properties to control replication.
+A lightweight state machine implementation for managing the states and transitions of entities. State machines are referenced by name and have properties to control replication, meaning they are self-syncable. (Replication is easy to opt-in to and control dynamically, but entirely optional.)
+
+Little to no boilerplate, as many methods are optional (i.e OnExit, Update)
 
 ## Classes
 
