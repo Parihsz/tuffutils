@@ -9,7 +9,7 @@ I have published these libraries to wally. You can add the ones you want to `wal
 State = "parihsz/state@^1.0.1"
 Grid = "parihsz/grid@^1.0.2"
 Quest = "parihsz/quest@^1.0.3"
-Test = "parihsz/test@^1.0.0"
+Test = "parihsz/test@^1.0.1"
 Tween = "parihsz/tween@^1.0.1"
 Orbit = "parihsz/orbit@^1.0.1"
 ```
