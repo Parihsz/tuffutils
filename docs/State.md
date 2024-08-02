@@ -1,6 +1,6 @@
 # State
 
-A lightweight state machine implementation for managing the states and transitions of entities. State machines are referenced by name and have properties to control replication, meaning they are self-syncable. (Replication is easy to opt-in to and control dynamically, but entirely optional.)
+A lightweight state machine implementation for managing the states and transitions of entities. State machines are referenced by name and have properties to control replication, meaning they are self-syncable. (Replication is easy to opt-in to and control dynamically, but entirely optional as states are not replicated by default.)
 
 Little to no boilerplate, as many methods are optional (i.e OnExit, Update)
 
