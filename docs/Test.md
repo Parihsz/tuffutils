@@ -1,6 +1,6 @@
 # Test Module Documentation
 
-This module provides functionality to run tests, compare results, and benchmark performance using generics for enhanced type safety and flexibility.
+This module provides functionality to run tests flexibly, quickly/accurately benchmark and race various functions.
 
 ## Types
 
