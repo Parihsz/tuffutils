@@ -8,7 +8,7 @@ They are:
 * Can be built upon or used as full blown systems, allowing for quicker development time.
 * The API was made to be easy to understand, use and can fit in most codebases.
 * Fully typed with ``--!strict``
-* Documented with examples and explanationsl.
-* Updated regularly, fixing or improving current modules or adding new libraries. 
+* Documented with examples and explanations.
+* Updated regularly, fixing/improving current modules or adding new libraries. 
 
 Please make an issue or PR if you find any problems or message me on discord.
