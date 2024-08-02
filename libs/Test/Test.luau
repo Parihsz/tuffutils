@@ -1,18 +1,20 @@
-type TestCase = {
-	input: (() -> any) | { any },
-	expected: (() -> any) | any,
+type Compare<T, U> = (a: U, b: U, threshold: number) -> boolean
+
+type TestCase<T, U> = {
+	input: (() -> { T }) | { T },
+	expected: (() -> U) | U,
 }
 
-type Options = {
+type Options<T, U> = {
 	threshold: number?,
 	timeLimit: number?,
-	compare: ((a: any, b: any, threshold: number) -> boolean)?,
+	compare: Compare<T, U>?,
 }
 
-type Result = {
-	input: (() -> any) | { any },
-	expected: any,
-	output: any,
+type Result<T, U> = {
+	input: (() -> { T }) | { T },
+	expected: U,
+	output: U,
 	passed: boolean,
 	error: string?,
 	timeTaken: number,
@@ -58,15 +60,19 @@ local function MeasureTime(func: () -> any): (boolean, any, number)
 	return success, result, endTime - startTime
 end
 
-function Test.RunTests(testCases: { TestCase }, func: (...any) -> any, providedOptions: Options?): { Result }
-	local options = providedOptions or {
+function Test.RunTests<T, U>(
+	testCases: { TestCase<T, U> },
+	func: (...T) -> U,
+	providedOptions: Options<T, U>?
+): { Result<T, U> }
+	local options: Options<T, U> = providedOptions or {
 		threshold = 0,
 		compare = Equal,
 		timeLimit = math.huge,
 	}
 
 	local threshold = options.threshold or 0
-	local compare: any = options.compare or Equal
+	local compare: Compare<T, U> = options.compare or Equal
 	local timeLimit = options.timeLimit or math.huge
 	local results = table.create(#testCases)
 
@@ -76,7 +82,7 @@ function Test.RunTests(testCases: { TestCase }, func: (...any) -> any, providedO
 
 		local success, output, timeTaken = MeasureTime(function()
 			if type(input) == "function" then
-				return input()
+				return table.unpack(input())
 			else
 				return func(table.unpack(input))
 			end
@@ -114,10 +120,10 @@ function Test.RunTests(testCases: { TestCase }, func: (...any) -> any, providedO
 	return results
 end
 
-function Test.Expect(actual: any)
+function Test.Expect<T>(actual: T)
 	local matchers = {}
 
-	function matchers.ToEqual(expected: any): boolean
+	function matchers.ToEqual(expected: T): boolean
 		if actual ~= expected then
 			return false
 		end
@@ -169,7 +175,7 @@ function Test.Expect(actual: any)
 	return matchers
 end
 
-function Test.Benchmark(func: (...any) -> any, input: any, iterations: number): number
+function Test.Benchmark<T>(func: (...T) -> any, input: { T }, iterations: number): number
 	local totalTime = 0
 
 	for _ = 1, iterations do
@@ -182,7 +188,7 @@ function Test.Benchmark(func: (...any) -> any, input: any, iterations: number): 
 	return totalTime / iterations
 end
 
-function Test.Race(functions: { [string]: (...any) -> any }, input: any, iterations: number): { string }
+function Test.Race<T>(functions: { [string]: (...T) -> any }, input: { T }, iterations: number): { string }
 	local results = {}
 
 	for name, func in functions do
