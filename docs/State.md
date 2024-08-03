@@ -98,3 +98,47 @@ ai.fsm:SetReplication(false, true) -- This sets replication from client -> serve
 ai.fsm:Transition("Attacking", ai.model)
 --Transition will call the mandatory OnEnter function you provide in the init.
 ```
+
+### Managing transitions
+
+```lua
+--Ideally, you should have a module for each mob type's state function. 
+local StateFunctions = {}
+
+function StateFunctions.PassiveOnEnter(ai)
+	ai.target = nil
+	ai.humanoid:MoveTo(ai.HRP.Position) -- immediately stop their movement
+	--stop necessary animations
+end
+
+local function ProcessCharacter(ai: AI, character: Model)
+	--process your target
+	ai.state.Target = character
+	ai.fsm:Transition("Attacking")
+end
+
+function StateFunctions.PassiveUpdate(ai: AI)
+	local closestCharacter =
+		MobUtil.TargetScan(ai.model, DETECTION_DISTANCE)
+
+	if closestCharacter then
+		ProcessCharacter(ai, closestCharacter)
+	end
+end
+
+function StateFunctions.AttackingOnEnter(ai: AI)
+	if not ai.target then
+		ai.fsm:Transition("Passive")
+	else
+		StateFunctions.AttackingUpdate(ai)
+	end
+end
+
+function StateFunctions.AttackingUpdate(ai: AI)
+	--something that should be ran every heartbeat, like attacking and movement. 
+	CombatAI(ai)
+end
+
+--etc
+return StateFunctions
+```
