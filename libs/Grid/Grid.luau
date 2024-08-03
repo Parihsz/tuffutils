@@ -17,8 +17,41 @@ local lastUpdate = 0
 local grid: Grid = {}
 local entities: Entities = {}
 
-function Grid.HashPosition(position: Vector3): Vector3
+local function HashPosition(position: Vector3): Vector3
 	return Vector3.new(position.X // GRID_SIZE + 0.5, 0, position.Z // GRID_SIZE + 0.5)
+end
+
+local function MagnitudeSquared(position: Vector3): number
+	return position.X * position.X + position.Y * position.Y + position.Z * position.Z
+end
+
+local function RemoveOld(entity: Entity, entityType: string, lastHash: Vector3)
+	local oldCell = grid[lastHash]
+	if not oldCell then
+		return
+	end
+
+	local index = table.find(oldCell[entityType], entity)
+	if not index then
+		return
+	end
+
+	table.remove(oldCell[entityType], index)
+	if #oldCell[entityType] == 0 then
+		oldCell[entityType] = nil
+	end
+	if next(oldCell) == nil then
+		grid[lastHash] = nil
+	end
+end
+
+local function AddNew(entity: Entity, entityType: string, hash: Vector3)
+	local cell: GridCell = grid[hash] or {}
+	cell[entityType] = cell[entityType] or {}
+	grid[hash] = cell
+
+	table.insert(cell[entityType], entity)
+	lastPositions[entity] = hash
 end
 
 function Grid.UpdateGrid()
@@ -29,44 +62,29 @@ function Grid.UpdateGrid()
 
 	for entity, entityType in entities do
 		local position = entity:GetPivot().Position
-		local hash = Grid.HashPosition(position)
+		local hash = HashPosition(position)
 		local lastHash = lastPositions[entity]
 
-		if lastHash == hash then
-			continue
-		end
-
-		if lastHash then
-			local oldCell = grid[lastHash]
-
-			if oldCell then
-				local index = table.find(oldCell[entityType], entity)
-				if index then
-					table.remove(oldCell[entityType], index)
-					if #oldCell[entityType] == 0 then
-						oldCell[entityType] = nil
-					end
-					if next(oldCell) == nil then
-						grid[lastHash] = nil
-					end
-				end
+		if lastHash ~= hash then
+			if lastHash then
+				RemoveOld(entity, entityType, lastHash)
 			end
+
+			AddNew(entity, entityType, hash)
 		end
-
-		local cell: GridCell = grid[hash] or {}
-		cell[entityType] = cell[entityType] or {}
-		grid[hash] = cell
-
-		table.insert(cell[entityType], entity)
-		lastPositions[entity] = hash
 	end
 
 	lastUpdate = currentTime
 end
 
-local function ProcessEntities(entitiesTable: { Entity }, position: Vector3, range: number, nearbyEntities: { Entity })
+local function ProcessEntities(
+	entitiesTable: { Entity },
+	position: Vector3,
+	rangeSquared: number,
+	nearbyEntities: { Entity }
+)
 	for _, entity in entitiesTable do
-		if (entity:GetPivot().Position - position).Magnitude <= range then
+		if MagnitudeSquared(entity:GetPivot().Position - position) <= rangeSquared then
 			table.insert(nearbyEntities, entity)
 		end
 	end
@@ -76,19 +94,19 @@ local function ProcessCell(
 	cell: GridCell,
 	entityTypes: { string }?,
 	position: Vector3,
-	range: number,
+	rangeSquared: number,
 	nearbyEntities: { Entity }
 )
 	if entityTypes then
 		for _, entityType in entityTypes do
 			local entitiesTable = cell[entityType]
 			if entitiesTable then
-				ProcessEntities(entitiesTable, position, range, nearbyEntities)
+				ProcessEntities(entitiesTable, position, rangeSquared, nearbyEntities)
 			end
 		end
 	else
 		for _, entitiesTable in cell do
-			ProcessEntities(entitiesTable, position, range, nearbyEntities)
+			ProcessEntities(entitiesTable, position, rangeSquared, nearbyEntities)
 		end
 	end
 end
@@ -97,18 +115,19 @@ function Grid.QueryGrid(position: Vector3, range: number, entityTypes: { string 
 	Grid.UpdateGrid()
 
 	local rangeInCells = math.ceil(range / GRID_SIZE)
-	local hash = Grid.HashPosition(position)
+	local hash = HashPosition(position)
 	local startX, startZ = hash.X - rangeInCells, hash.Z - rangeInCells
 	local endX, endZ = hash.X + rangeInCells, hash.Z + rangeInCells
 
 	local nearbyEntities: { Entity } = {}
+	local rangeSquared = range * range
 
 	for xCell = startX, endX do
 		for zCell = startZ, endZ do
 			local cellKey = Vector3.new(xCell, 0, zCell)
 			local cell = grid[cellKey]
 			if cell then
-				ProcessCell(cell, entityTypes, position, range, nearbyEntities)
+				ProcessCell(cell, entityTypes, position, rangeSquared, nearbyEntities)
 			end
 		end
 	end

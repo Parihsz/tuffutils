@@ -89,9 +89,9 @@ local ai = {
 	model = workspace.AI
 }
 
-ai:SetReplication(true) -- This sets the replication from server -> client to true. Meaning when the state changes on the server, it will sync the state machine with the same ID on the client.
+ai.fsm:SetReplication(true) -- This sets the replication from server -> client to true. Meaning when the state changes on the server, it will sync the state machine with the same ID on the client.
 
-ai:SetReplication(false, true) -- This sets replication from client -> server to true. Same deal.
+ai.fsm:SetReplication(false, true) -- This sets replication from client -> server to true. Same deal.
 
 --Note that, replication can only be set from the server.
 

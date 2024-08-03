@@ -14,18 +14,6 @@ This module manages various entity positions on a grid using spatial hashing. It
 
 ## Functions
 
-### `HashPosition(position: Vector3): Vector3`
-
-Hashes the given position to a grid cell.
-
-#### Parameters
-
-- `position: Vector3` - The position to hash.
-
-#### Returns
-
-- `Vector3` - The hashed position.
-
 ### `UpdateGrid()`
 
 Updates the grid with the current positions of all tracked entities. This function is called at a fixed interval defined by `UPDATE_INTERVAL`.
