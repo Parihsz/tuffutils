@@ -64,7 +64,7 @@ local function InitializeStateMachine(ID: string)
 	fsm:State({
 		Name = "Passive",
 		OnEnter = StateFunctions.PassiveOnEnter,
-		Update = StateFunctions.PassiveUpdate, -- Update runs every heartbeat internally from the State library.
+		Update = StateFunctions.PassiveUpdate, -- Update is something the State module provides, but should be handled by you. It is something that should be ran continuously in a certain state.
 	})
 
 	fsm:State({
@@ -95,8 +95,14 @@ ai.fsm:SetReplication(false, true) -- This sets replication from client -> serve
 
 --Note that, replication can only be set from the server.
 
-ai.fsm:Transition("Attacking", ai.model)
+ai.fsm:Transition("Passive", ai.model)
 --Transition will call the mandatory OnEnter function you provide in the init.
+
+RunService.Heartbeat:Connect(function() --set up your own way of updating. 
+	for _, ai in activeAI do
+		ai.stateMachine:Update()
+	end
+end)
 ```
 
 ### Managing transitions
