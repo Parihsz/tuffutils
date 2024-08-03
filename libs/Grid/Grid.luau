@@ -12,7 +12,7 @@ local GRID_SIZE = 50
 local UPDATE_INTERVAL = 2
 
 local lastPositions: { [Entity]: Vector3 } = {}
-local lastUpdate: number = 0
+local lastUpdate = 0
 
 local grid: Grid = {}
 local entities: Entities = {}
@@ -22,25 +22,25 @@ function Grid.HashPosition(position: Vector3): Vector3
 end
 
 function Grid.UpdateGrid()
-	local currentTime: number = time()
+	local currentTime = time()
 	if currentTime - lastUpdate < UPDATE_INTERVAL then
 		return
 	end
 
 	for entity, entityType in entities do
-		local position: Vector3 = entity:GetPivot().Position
-		local hash: Vector3 = Grid.HashPosition(position)
-		local lastHash: Vector3? = lastPositions[entity]
+		local position = entity:GetPivot().Position
+		local hash = Grid.HashPosition(position)
+		local lastHash = lastPositions[entity]
 
 		if lastHash == hash then
 			continue
 		end
 
 		if lastHash then
-			local oldCell: GridCell? = grid[lastHash]
+			local oldCell = grid[lastHash]
 
 			if oldCell then
-				local index: number? = table.find(oldCell[entityType], entity)
+				local index = table.find(oldCell[entityType], entity)
 				if index then
 					table.remove(oldCell[entityType], index)
 					if #oldCell[entityType] == 0 then
