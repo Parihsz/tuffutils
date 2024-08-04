@@ -60,6 +60,27 @@ local function MeasureTime(func: () -> any): (boolean, any, number)
 	return success, result, endTime - startTime
 end
 
+local function RunFunction(func, input, callback, threads, main_thread)
+	return function()
+		local success, result, _ = MeasureTime(function()
+			return func(table.unpack(input))
+		end)
+		if success then
+			callback(result, threads, main_thread)
+		end
+	end
+end
+
+local function Callback(output, threads, main_thread)
+	local callback_thread = coroutine.running()
+	for _, thread in threads do
+		if thread ~= callback_thread and coroutine.status(thread) == "suspended" then
+			coroutine.close(thread)
+		end
+	end
+	coroutine.resume(main_thread, output)
+end
+
 function Test.RunTests<T, U>(
 	testCases: { TestCase<T, U> },
 	func: (...T) -> U,
@@ -188,24 +209,19 @@ function Test.Benchmark<T>(func: (...T) -> any, input: { T }, iterations: number
 	return totalTime / iterations
 end
 
-function Test.Race<T>(functions: { [string]: (...T) -> any }, input: { T }, iterations: number): { string }
-	local results = {}
+function Test.Race<T>(functions: { (...T) -> any }, input: { T }): any
+	local threads = {}
+	local main_thread = coroutine.running()
 
-	for name, func in functions do
-		local averageTime = Test.Benchmark(func, input, iterations)
-		table.insert(results, { name = name, time = averageTime })
+	for _, func in functions do
+		local thread = coroutine.create(RunFunction(func, input, Callback, threads, main_thread))
+		table.insert(threads, thread)
+		coroutine.resume(thread)
 	end
 
-	table.sort(results, function(a, b)
-		return a.time < b.time
-	end)
+	local result = coroutine.yield()
 
-	local rankedNames: { string } = {}
-	for _, result in results do
-		table.insert(rankedNames, result.name)
-	end
-
-	return rankedNames
+	return result
 end
 
 return Test

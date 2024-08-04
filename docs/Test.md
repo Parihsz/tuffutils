@@ -1,4 +1,4 @@
-# Test Module Documentation
+# Test
 
 This module provides functionality to run tests flexibly, quickly/accurately benchmark and race various functions.
 
@@ -93,15 +93,14 @@ Benchmarks a function by running it multiple times and returns the average time 
 #### Returns
 The average time taken per iteration.
 
-### `Test.Race<T>(functions: { [string]: (...T) -> any }, input: { T }, iterations: number): { string }`
-Compares the performance of multiple functions by running each one multiple times and ranks them from fastest to slowest.
+### `Test.Race<T>(functions: { (...T) -> any }, input: { T }): any`
+Runs several functions concurrently and returns the result of the function that completes first.
 
-- `functions`: A table where keys are function names and values are the functions to be compared.
-- `input`: The input to the functions.
-- `iterations`: The number of times to run each function.
+- `functions`: A table of functions to be raced.
+- `input`: The input to be passed to the functions.
 
 #### Returns
-An array of function names ranked from fastest to slowest.
+The result of the first function to complete.
 
 ## Usage
 
@@ -171,15 +170,9 @@ Benchmarks a function by running it multiple times and returns the average time 
 #### Returns
 The average time taken per iteration.
 
-### `Test.Race(functions: { [string]: (...any) -> any }, input: any, iterations: number): { string }`
-Compares the performance of multiple functions by running each one multiple times and ranks them from fastest to slowest.
+### `Test.Race
 
-- `functions`: A table where keys are function names and values are the functions to be compared.
-- `input`: The input to the functions.
-- `iterations`: The number of times to run each function.
 
-#### Returns
-An array of function names ranked from fastest to slowest.
 
 ## Usage
 
@@ -289,47 +282,26 @@ end
 
 ### Racing
 ```lua
-local functionsToRace = {
-    Addition = function()
-        local a = 1
-        local b = 2
-        for _ = 1, 1000 do
-            local result = a + b
-        end
-    end,
-    Subtraction = function()
-        local a = 3
-        local b = 2
-        for _ = 1, 1000 do
-            local result = a - b
-        end
-    end,
-    Multiplication = function()
-        local a = 2
-        local b = 3
-        for _ = 1, 1000 do
-            local result = a * b
-        end
-    end,
-    Division = function()
-        local a = 6
-        local b = 2
-        for _ = 1, 1000 do
-            local result = a / b
-        end
-    end,
-    Modulus = function()
-        local a = 5
-        local b = 2
-        for _ = 1, 1000 do
-            local result = a % b
-        end
-    end,
-}
+local Test = require(Test)
 
-local raceResults = Test.Race(functionsToRace, {}, 1000)
-print("Race Results (fastest to slowest):")
-for i, name in raceResults do
-    print(`{i}: {name}`)
+local function V1(str)
+    task.wait(5)
+    return str .. `{str}! I took 5 seconds`
 end
+
+local function V2(str)
+    task.wait(2)
+    return `{str}! I took 2 seconds`
+end
+
+local function V3(str)
+    task.wait(3)
+    return `{str}! I took 3 seconds`
+end
+
+local input = { "Hello" }
+
+local result = Test.Race({ V1, V2, V3 }, input)
+print(result)  -- Expected to print: "Hello! I took 2 seconds" since it will finish first
+
 ```
