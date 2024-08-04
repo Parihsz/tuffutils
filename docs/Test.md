@@ -254,7 +254,7 @@ assert(not expectNil.ToBeNonNil()) -- false
 
 ### Benchmarking
 ```lua
-local Test = require(script.Parent.ModuleScript)
+local Test = require(Test)
 
 local functionsToBenchmark = {
     Vector3Add = function()
