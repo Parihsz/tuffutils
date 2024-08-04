@@ -1,20 +1,20 @@
-type Compare<T, U> = (a: U, b: U, threshold: number) -> boolean
+type Compare<InputType, OutputType> = (a: OutputType, b: OutputType, threshold: number) -> boolean
 
-type TestCase<T, U> = {
-	input: (() -> { T }) | { T },
-	expected: (() -> U) | U,
+type TestCase<InputType, OutputType> = {
+	input: (() -> { InputType }) | { InputType },
+	expected: (() -> OutputType) | OutputType,
 }
 
-type Options<T, U> = {
+type Options<InputType, OutputType> = {
 	threshold: number?,
 	timeLimit: number?,
-	compare: Compare<T, U>?,
+	compare: Compare<InputType, OutputType>?,
 }
 
-type Result<T, U> = {
-	input: (() -> { T }) | { T },
-	expected: U,
-	output: U,
+type Result<InputType, OutputType> = {
+	input: (() -> { InputType }) | { InputType },
+	expected: OutputType,
+	output: OutputType,
 	passed: boolean,
 	error: string?,
 	timeTaken: number,
@@ -56,44 +56,44 @@ local function MeasureTime(func: () -> any): (boolean, any, number)
 	local startTime = os.clock()
 	local success, result = pcall(func)
 	local endTime = os.clock()
-
 	return success, result, endTime - startTime
 end
 
-local function RunFunction(func, input, callback, threads, main_thread)
+local function RunFunction(func, input, callback, threads, mainThread)
 	return function()
 		local success, result, _ = MeasureTime(function()
 			return func(table.unpack(input))
 		end)
 		if success then
-			callback(result, threads, main_thread)
+			callback(result, threads, mainThread)
 		end
 	end
 end
 
 local function Callback(output, threads, main_thread)
-	local callback_thread = coroutine.running()
+	local callbackThread = coroutine.running()
 	for _, thread in threads do
-		if thread ~= callback_thread and coroutine.status(thread) == "suspended" then
+		if thread ~= callbackThread and coroutine.status(thread) == "suspended" then
 			coroutine.close(thread)
 		end
 	end
 	coroutine.resume(main_thread, output)
 end
 
-function Test.RunTests<T, U>(
-	testCases: { TestCase<T, U> },
-	func: (...T) -> U,
-	providedOptions: Options<T, U>?
-): { Result<T, U> }
-	local options: Options<T, U> = providedOptions or {
-		threshold = 0,
-		compare = Equal,
-		timeLimit = math.huge,
-	}
+function Test.RunTests<InputType, OutputType>(
+	testCases: { TestCase<InputType, OutputType> },
+	func: (...InputType) -> OutputType,
+	providedOptions: Options<InputType, OutputType>?
+): { Result<InputType, OutputType> }
+	local options: Options<InputType, OutputType> = providedOptions
+		or {
+			threshold = 0,
+			compare = Equal,
+			timeLimit = math.huge,
+		}
 
 	local threshold = options.threshold or 0
-	local compare: Compare<T, U> = options.compare or Equal
+	local compare: Compare<InputType, OutputType> = options.compare or Equal
 	local timeLimit = options.timeLimit or math.huge
 	local results = table.create(#testCases)
 
@@ -141,10 +141,10 @@ function Test.RunTests<T, U>(
 	return results
 end
 
-function Test.Expect<T>(actual: T)
+function Test.Expect<ActualType>(actual: ActualType)
 	local matchers = {}
 
-	function matchers.ToEqual(expected: T): boolean
+	function matchers.ToEqual(expected: ActualType): boolean
 		if actual ~= expected then
 			return false
 		end
@@ -196,7 +196,7 @@ function Test.Expect<T>(actual: T)
 	return matchers
 end
 
-function Test.Benchmark<T>(func: (...T) -> any, input: { T }, iterations: number): number
+function Test.Benchmark<InputType>(func: (...InputType) -> any, input: { InputType }, iterations: number): number
 	local totalTime = 0
 
 	for _ = 1, iterations do
@@ -209,7 +209,7 @@ function Test.Benchmark<T>(func: (...T) -> any, input: { T }, iterations: number
 	return totalTime / iterations
 end
 
-function Test.Race<T>(functions: { (...T) -> any }, input: { T }): any
+function Test.Race<InputType>(functions: { (...InputType) -> any }, input: { InputType }): any
 	local threads = {}
 	local mainThread = coroutine.running()
 

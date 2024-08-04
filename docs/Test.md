@@ -1,17 +1,23 @@
-# Test
+### Test
 
-This module provides functionality to run tests flexibly, quickly/accurately benchmark and race various functions.
+This module provides functionality to run tests flexibly, quickly/accurately benchmark, and race various functions.
 
 ## Types
+
+### `InputType`
+The type of the input parameters for the function being tested. It can be any data type that the function accepts.
+
+### `OutputType`
+The the type of the expected output from the function being tested. It can be any data type that the function returns.
 
 ### `TestCase`
 Represents a single test case.
 
-- `input: (() -> { T }) | { T }`
-  - The input to the function being tested. This can be a function that returns the input or an array of inputs of type `T`.
+- `input: (() -> { InputType }) | { InputType }`
+  - The input to the function being tested. This can be a function that returns the input or an array of inputs of type `InputType`.
 
-- `expected: (() -> U) | U`
-  - The expected output from the function being tested. This can be a function that returns the expected output or a direct value of type `U`.
+- `expected: (() -> OutputType) | OutputType`
+  - The expected output from the function being tested. This can be a function that returns the expected output or a direct value of type `OutputType`.
 
 ### `Options`
 Represents optional settings for running tests.
@@ -22,19 +28,19 @@ Represents optional settings for running tests.
 - `timeLimit: number?`
   - An optional time limit in seconds for each test case. If the function takes longer than this, the test will fail.
 
-- `compare: Compare<T, U>?`
+- `compare: Compare<InputType, OutputType>?`
   - An optional custom comparison function to compare the actual and expected outputs.
 
 ### `Result`
 Represents the result of a single test case.
 
-- `input: (() -> { T }) | { T }`
+- `input: (() -> { InputType }) | { InputType }`
   - The input to the function being tested.
 
-- `expected: U`
+- `expected: OutputType`
   - The expected output from the function being tested.
 
-- `output: U`
+- `output: OutputType`
   - The actual output from the function being tested.
 
 - `passed: boolean`
@@ -48,21 +54,21 @@ Represents the result of a single test case.
 
 ## Functions
 
-### `Test.RunTests<T, U>(testCases: { TestCase<T, U> }, func: (...T) -> U, providedOptions: Options<T, U>?): { Result<T, U> }`
+### `Test.RunTests<InputType, OutputType>(testCases: { TestCase<InputType, OutputType> }, func: (...InputType) -> OutputType, providedOptions: Options<InputType, OutputType>?): { Result<InputType, OutputType> }`
 Runs a set of test cases on a specified function and returns the results.
 
-- `testCases`: An array of `TestCase<T, U>` objects to be tested.
+- `testCases`: An array of `TestCase<InputType, OutputType>` objects to be tested.
 - `func`: The function to be tested.
 - `providedOptions`: Optional settings for running the tests.
 
 #### Returns
-An array of `Result<T, U>` objects.
+An array of `Result<InputType, OutputType>` objects.
 
-### `Test.Expect<T>(actual: T)`
+### `Test.Expect<ActualType>(actual: ActualType)`
 Creates a set of matchers to assert the value of `actual`.
 
 #### Matchers
-- `ToEqual(expected: T): boolean`
+- `ToEqual(expected: ActualType): boolean`
   - Checks that `actual` is equal to `expected`.
 
 - `ToBeTruthy(): boolean`
@@ -83,7 +89,7 @@ Creates a set of matchers to assert the value of `actual`.
 - `ToBeNonNil(): boolean`
   - Checks the actual value is not nil.
 
-### `Test.Benchmark<T>(func: (...T) -> any, input: { T }, iterations: number): number`
+### `Test.Benchmark<InputType>(func: (...InputType) -> any, input: { InputType }, iterations: number): number`
 Benchmarks a function by running it multiple times and returns the average time taken.
 
 - `func`: The function to be benchmarked.
@@ -93,7 +99,7 @@ Benchmarks a function by running it multiple times and returns the average time 
 #### Returns
 The average time taken per iteration.
 
-### `Test.Race<T>(functions: { (...T) -> any }, input: { T }): any`
+### `Test.Race<InputType>(functions: { (...InputType) -> any }, input: { InputType }): any`
 Runs several functions concurrently and returns the result of the function that completes first.
 
 - `functions`: A table of functions to be raced.
