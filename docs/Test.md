@@ -1,4 +1,4 @@
-### Test
+# Test
 
 This module provides functionality to run tests flexibly, quickly/accurately benchmark, and race various functions.
 
