@@ -4,20 +4,17 @@ This module provides functionality to run tests flexibly, quickly/accurately ben
 
 ## Types
 
-### `InputType`
-The type of the input parameters for the function being tested. It can be any data type that the function accepts.
-
-### `OutputType`
-The the type of the expected output from the function being tested. It can be any data type that the function returns.
+### `Compare`
+The type for the custom comparison function.
 
 ### `TestCase`
 Represents a single test case.
 
-- `input: (() -> { InputType }) | { InputType }`
-  - The input to the function being tested. This can be a function that returns the input or an array of inputs of type `InputType`.
+- `input: (() -> { any }) | { any }`
+  - The input to the function being tested. This can be a function that returns the input or an array of inputs of type `any`.
 
-- `expected: (() -> OutputType) | OutputType`
-  - The expected output from the function being tested. This can be a function that returns the expected output or a direct value of type `OutputType`.
+- `expected: (() -> any) | any`
+  - The expected output from the function being tested. This can be a function that returns the expected output or a direct value of type `any`.
 
 ### `Options`
 Represents optional settings for running tests.
@@ -28,19 +25,19 @@ Represents optional settings for running tests.
 - `timeLimit: number?`
   - An optional time limit in seconds for each test case. If the function takes longer than this, the test will fail.
 
-- `compare: Compare<InputType, OutputType>?`
+- `compare: Compare?`
   - An optional custom comparison function to compare the actual and expected outputs.
 
 ### `Result`
 Represents the result of a single test case.
 
-- `input: (() -> { InputType }) | { InputType }`
+- `input: (() -> { any }) | { any }`
   - The input to the function being tested.
 
-- `expected: OutputType`
+- `expected: any`
   - The expected output from the function being tested.
 
-- `output: OutputType`
+- `output: any`
   - The actual output from the function being tested.
 
 - `passed: boolean`
@@ -54,21 +51,21 @@ Represents the result of a single test case.
 
 ## Functions
 
-### `Test.RunTests<InputType, OutputType>(testCases: { TestCase<InputType, OutputType> }, func: (...InputType) -> OutputType, providedOptions: Options<InputType, OutputType>?): { Result<InputType, OutputType> }`
+### `Test.RunTests(testCases: { TestCase }, func: (...any) -> any, providedOptions: Options?): { Result }`
 Runs a set of test cases on a specified function and returns the results.
 
-- `testCases`: An array of `TestCase<InputType, OutputType>` objects to be tested.
+- `testCases`: An array of `TestCase` objects to be tested.
 - `func`: The function to be tested.
 - `providedOptions`: Optional settings for running the tests.
 
 #### Returns
-An array of `Result<InputType, OutputType>` objects.
+An array of `Result` objects.
 
-### `Test.Expect<ActualType>(actual: ActualType)`
+### `Test.Expect(actual: any)`
 Creates a set of matchers to assert the value of `actual`.
 
 #### Matchers
-- `ToEqual(expected: ActualType): boolean`
+- `ToEqual(expected: any): boolean`
   - Checks that `actual` is equal to `expected`.
 
 - `ToBeTruthy(): boolean`
@@ -89,7 +86,7 @@ Creates a set of matchers to assert the value of `actual`.
 - `ToBeNonNil(): boolean`
   - Checks the actual value is not nil.
 
-### `Test.Benchmark<InputType>(func: (...InputType) -> any, input: { InputType }, iterations: number): number`
+### `Test.Benchmark(func: (...any) -> any, input: { any }, iterations: number): number`
 Benchmarks a function by running it multiple times and returns the average time taken.
 
 - `func`: The function to be benchmarked.
@@ -99,7 +96,7 @@ Benchmarks a function by running it multiple times and returns the average time 
 #### Returns
 The average time taken per iteration.
 
-### `Test.Race<InputType>(functions: { (...InputType) -> any }, input: { InputType }): any`
+### `Test.Race(functions: { (...any) -> any }, input: { any }): any`
 Runs several functions concurrently and returns the result of the function that completes first.
 
 - `functions`: A table of functions to be raced.

@@ -1,20 +1,20 @@
-type Compare<InputType, OutputType> = (a: OutputType, b: OutputType, threshold: number) -> boolean
+type Compare = (a: any, b: any, threshold: number) -> boolean
 
-type TestCase<InputType, OutputType> = {
-	input: (() -> { InputType }) | { InputType },
-	expected: (() -> OutputType) | OutputType,
+type TestCase = {
+	input: (() -> { any }) | { any },
+	expected: (() -> any) | any,
 }
 
-type Options<InputType, OutputType> = {
+type Options = {
 	threshold: number?,
 	timeLimit: number?,
-	compare: Compare<InputType, OutputType>?,
+	compare: Compare?,
 }
 
-type Result<InputType, OutputType> = {
-	input: (() -> { InputType }) | { InputType },
-	expected: OutputType,
-	output: OutputType,
+type Result = {
+	input: (() -> { any }) | { any },
+	expected: any,
+	output: any,
 	passed: boolean,
 	error: string?,
 	timeTaken: number,
@@ -80,20 +80,15 @@ local function Callback(output, threads, main_thread)
 	coroutine.resume(main_thread, output)
 end
 
-function Test.RunTests<InputType, OutputType>(
-	testCases: { TestCase<InputType, OutputType> },
-	func: (...InputType) -> OutputType,
-	providedOptions: Options<InputType, OutputType>?
-): { Result<InputType, OutputType> }
-	local options: Options<InputType, OutputType> = providedOptions
-		or {
-			threshold = 0,
-			compare = Equal,
-			timeLimit = math.huge,
-		}
+function Test.RunTests(testCases: { TestCase }, func: (...any) -> any, providedOptions: Options?): { Result }
+	local options: Options = providedOptions or {
+		threshold = 0,
+		compare = Equal,
+		timeLimit = math.huge,
+	}
 
 	local threshold = options.threshold or 0
-	local compare: Compare<InputType, OutputType> = options.compare or Equal
+	local compare: Compare = options.compare or Equal
 	local timeLimit = options.timeLimit or math.huge
 	local results = table.create(#testCases)
 
@@ -141,10 +136,10 @@ function Test.RunTests<InputType, OutputType>(
 	return results
 end
 
-function Test.Expect<ActualType>(actual: ActualType)
+function Test.Expect(actual: any)
 	local matchers = {}
 
-	function matchers.ToEqual(expected: ActualType): boolean
+	function matchers.ToEqual(expected: any): boolean
 		if actual ~= expected then
 			return false
 		end
@@ -196,7 +191,7 @@ function Test.Expect<ActualType>(actual: ActualType)
 	return matchers
 end
 
-function Test.Benchmark<InputType>(func: (...InputType) -> any, input: { InputType }, iterations: number): number
+function Test.Benchmark(func: (...any) -> any, input: { any }, iterations: number): number
 	local totalTime = 0
 
 	for _ = 1, iterations do
@@ -209,7 +204,7 @@ function Test.Benchmark<InputType>(func: (...InputType) -> any, input: { InputTy
 	return totalTime / iterations
 end
 
-function Test.Race<InputType>(functions: { (...InputType) -> any }, input: { InputType }): any
+function Test.Race(functions: { (...any) -> any }, input: { any }): any
 	local threads = {}
 	local mainThread = coroutine.running()
 
