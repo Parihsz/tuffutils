@@ -211,10 +211,10 @@ end
 
 function Test.Race<T>(functions: { (...T) -> any }, input: { T }): any
 	local threads = {}
-	local main_thread = coroutine.running()
+	local mainThread = coroutine.running()
 
 	for _, func in functions do
-		local thread = coroutine.create(RunFunction(func, input, Callback, threads, main_thread))
+		local thread = coroutine.create(RunFunction(func, input, Callback, threads, mainThread))
 		table.insert(threads, thread)
 		coroutine.resume(thread)
 	end
