@@ -70,14 +70,14 @@ local function RunFunction(func, input, callback, threads, mainThread)
 	end
 end
 
-local function Callback(output, threads, main_thread)
+local function Callback(output, threads, mainThread)
 	local callbackThread = coroutine.running()
 	for _, thread in threads do
 		if thread ~= callbackThread and coroutine.status(thread) == "suspended" then
 			coroutine.close(thread)
 		end
 	end
-	coroutine.resume(main_thread, output)
+	coroutine.resume(mainThread, output)
 end
 
 function Test.RunTests(testCases: { TestCase }, func: (...any) -> any, providedOptions: Options?): { Result }
