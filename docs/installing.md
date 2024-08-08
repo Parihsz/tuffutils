@@ -11,7 +11,6 @@ Grid = "parihsz/grid@^1.0.4"
 Quest = "parihsz/quest@^1.0.3"
 Test = "parihsz/test@^1.0.6"
 Tween = "parihsz/tween@^1.0.1"
-Orbit = "parihsz/orbit@^1.0.1"
 ```
 
 :::
