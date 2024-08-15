@@ -1,6 +1,6 @@
 [package]
 name = "parihsz/quest"
-version = "1.0.4"
+version = "1.0.5"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 
