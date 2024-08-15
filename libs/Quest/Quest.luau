@@ -22,7 +22,6 @@ type QuestData = {
 	ProgressChanged: Signal.Signal<number>,
 	StateChanged: Signal.Signal<string>,
 	UpdateProgress: (number) -> (),
-	SetProgress: (number) -> (),
 	IncrementProgress: (number) -> (),
 	GetProgress: () -> number,
 	Complete: () -> (),
@@ -32,7 +31,6 @@ type QuestData = {
 type Quest = {
 	player: Player,
 	data: QuestData,
-	Start: () -> (),
 	Complete: () -> (),
 	Cancel: () -> (),
 }
@@ -70,8 +68,6 @@ local function NewQuest(
 		local stateChanged = Signal()
 
 		local Add, Clear = CreateBin()
-
-		local progress = 0
 
 		local questData: QuestData
 
@@ -111,27 +107,18 @@ local function NewQuest(
 			questData.progress = newProgress
 			progressChanged:Fire(newProgress)
 
-			if questData.progress >= questData.target then
+			if questData.progress >= target then
 				questData.status = "Completed"
 				Complete()
 			end
 		end
 
-		local function SetProgress(newProgress: number)
-			if progress == newProgress then
-				return
-			end
-
-			progress = math.min(target, newProgress)
-			progressChanged:Fire(progress)
-		end
-
 		local function GetProgress()
-			return progress
+			return questData.progress
 		end
 
 		local function IncrementProgress(amount: number)
-			SetProgress(progress + amount)
+			UpdateProgress(questData.progress + amount)
 		end
 
 		questData = {
@@ -146,7 +133,6 @@ local function NewQuest(
 			ProgressChanged = progressChanged,
 			StateChanged = stateChanged,
 			UpdateProgress = UpdateProgress,
-			SetProgress = SetProgress,
 			IncrementProgress = IncrementProgress,
 			GetProgress = GetProgress,
 			Complete = Complete,
@@ -158,9 +144,6 @@ local function NewQuest(
 		return {
 			player = player,
 			data = questData,
-			Start = function()
-				Initialize(questData, Add)
-			end,
 			Complete = Complete,
 			Cancel = Cancel,
 		}

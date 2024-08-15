@@ -16,9 +16,6 @@ This module provides functionality to manage quests for players. It supports sta
 
 #### Methods
 
-- **`Start() -> ()`**  
-  Initiates the quest and begins tracking its progress.
-
 - **`Complete() -> ()`**  
   Completes the quest if the conditions are met and applies the associated rewards.
 
@@ -76,13 +73,10 @@ Represents the data for a quest.
   A signal fired when the state of the quest changes.
 
 - **`UpdateProgress(newProgress: number) -> ()`**  
-  Updates the quest's progress and checks if the quest should be completed.
-
-- **`SetProgress(newProgress: number) -> ()`**  
-  Sets the progress to a specific value.
+  Sets the quest's progress, fires a changed signal and checks for completion.
 
 - **`IncrementProgress(amount: number) -> ()`**  
-  Increments the quest's progress by a specified amount.
+  Increments the quest's progress by a specified amount, fires a changed signal and checks for completion.
 
 - **`GetProgress() -> number`**  
   Returns the current progress of the quest.
@@ -179,10 +173,7 @@ return Rewards
 
 ```lua
 --create it!
-local Rewards = require(Rewards)
-local QuestUtil = require(QuestUtil)
-
-return QuestUtil.NewBanditQuest("Kill the Bandits!", 1, function(ai)
+NewBanditQuest("Kill the Bandits!", 1, function(ai)
 	return ai.model.Name == "Bandit"
-end, { Rewards.GiveCredits(100) })
+end, { Rewards.GiveCredits(100) })(player)
 ```
