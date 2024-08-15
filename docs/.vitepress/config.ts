@@ -7,7 +7,6 @@ function sidebar() {
     { text: 'Quest', link: '/Quest' },
     { text: 'Test', link: '/Test' },
     { text: 'Tween', link: '/Tween' },
-    { text: 'Orbit', link: '/Orbit' },
   ]
 }
 

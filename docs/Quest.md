@@ -1,6 +1,6 @@
 # Quest
 
-This module provides functionality to manage quests for players. It supports starting quests, updating progress, and completing quests.
+This module provides functionality to manage quests for players. It supports starting quests, updating progress, and completing quests, including applying rewards to the players.
 
 ## Classes
 
@@ -8,13 +8,22 @@ This module provides functionality to manage quests for players. It supports sta
 
 #### Properties
 
-- `player: Player` - The player associated with the quest.
-- `data: QuestData` - The data of the quest.
+- **`player: Player`**  
+  The player associated with the quest.
+
+- **`data: QuestData`**  
+  The data structure representing the quest's state and progress.
 
 #### Methods
 
-- `Start() -> ()` - Starts the quest.
-- `Complete() -> ()` - Completes the quest and applies rewards if completed.
+- **`Start() -> ()`**  
+  Initiates the quest and begins tracking its progress.
+
+- **`Complete() -> ()`**  
+  Completes the quest if the conditions are met and applies the associated rewards.
+
+- **`Cancel() -> ()`**  
+  Cancels the quest and cleans up any associated resources or connections.
 
 ## Types
 
@@ -24,8 +33,11 @@ Represents a reward that can be given to a player upon completing a quest.
 
 #### Properties
 
-- `name: string` - The name of the reward.
-- `Apply(player: Player) -> ()` - The function to apply the reward to a player.
+- **`name: string`**  
+  The name of the reward.
+
+- **`Apply(player: Player) -> ()`**  
+  The function to apply the reward to a player.
 
 ### `QuestData`
 
@@ -33,78 +45,144 @@ Represents the data for a quest.
 
 #### Properties
 
-- `name: string` - The name of the quest.
-- `progress: number` - The current progress of the quest.
-- `target: number` - The target progress to complete the quest.
-- `status: string` - The status of the quest (e.g., "InProgress" or "Completed").
-- `rewards: {Rewards}` - The rewards for completing the quest.
-- `npc: Instance?` - Optional. The NPC associated with the quest.
-- `connections: {RBXScriptConnection}` - The connections related to the quest.
-- `progressChanged: Signal` - The signal that fires when the progress changes.
-- `UpdateProgress(newProgress: number) -> ()` - The function to update the quest progress.
+- **`name: string`**  
+  The name of the quest.
 
-### `Signal`
+- **`progress: number`**  
+  The current progress value of the quest.
 
-Represents a signal that can be connected to, waited on, and fired.
+- **`target: number`**  
+  The target progress value needed to complete the quest.
 
-#### Properties
+- **`status: string`**  
+  The status of the quest (e.g., "InProgress", "Completed", "Cancelled").
 
-- `Root: SignalNode?` - The root node of the signal.
+- **`state: string`**  
+  The current state of the quest.
 
-#### Methods
+- **`rewards: { Rewards }`**  
+  A list of rewards that will be given upon quest completion.
 
-- `Connect(callback: (T...) -> ()) -> () -> ()` - Connects a callback to the signal.
-- `Wait() -> T...` - Waits for the signal to fire.
-- `Once(callback: (T...) -> ()) -> ()` - Connects a callback to the signal that will only be called once.
-- `Fire(T...) -> ()` - Fires the signal.
-- `DisconnectAll() -> ()` - Disconnects all connections from the signal.
+- **`npc: Instance?`**  
+  The NPC associated with the quest, if any.
+
+- **`connections: { RBXScriptConnection }`**  
+  A list of connections that should be cleaned up when the quest ends.
+
+- **`ProgressChanged: Signal<number>`**  
+  A signal fired when the progress of the quest changes.
+
+- **`StateChanged: Signal<string>`**  
+  A signal fired when the state of the quest changes.
+
+- **`UpdateProgress(newProgress: number) -> ()`**  
+  Updates the quest's progress and checks if the quest should be completed.
+
+- **`SetProgress(newProgress: number) -> ()`**  
+  Sets the progress to a specific value.
+
+- **`IncrementProgress(amount: number) -> ()`**  
+  Increments the quest's progress by a specified amount.
+
+- **`GetProgress() -> number`**  
+  Returns the current progress of the quest.
+
+- **`Complete() -> ()`**  
+  Completes the quest and applies rewards to the player.
+
+- **`Cancel() -> ()`**  
+  Cancels the quest and cleans up associated resources.
 
 ## Functions
 
-### `NewQuest`
+### `CreateBin() -> (Add, Clear)`
 
-Creates a new quest instance with the specified parameters.
-
-#### Parameters
-
-- `name: string` - The name of the quest.
-- `target: number` - The target progress value to complete the quest.
-- `rewards: {Rewards}` - The rewards for completing the quest.
-- `npc: Instance?` - Optional. The NPC associated with the quest.
-- `Initialize(QuestData, (any) -> ()) -> ()` - The initialization function for the quest.
+Creates a bin to manage quest items such as instances, connections, or functions that need to be cleaned up.
 
 #### Returns
 
-- `(Player) -> Quest` - The function to create a quest for a specific player.
+- **`Add: Add`**  
+  A function that adds an item to the bin.
 
-## Usage
+- **`Clear: Clear`**  
+  A function that clears all items in the bin, destroying instances, disconnecting connections, and spawning functions.
+
+### `NewQuest(name: string, target: number, rewards: { Rewards }, npc: Instance?, Initialize: (QuestData, Add) -> ()) -> (Player) -> Quest`
+
+Creates a new quest with the specified parameters and initialization function.
+
+#### Parameters
+
+- **`name: string`**  
+  The name of the quest.
+
+- **`target: number`**  
+  The target progress required to complete the quest.
+
+- **`rewards: { Rewards }`**  
+  A list of rewards to be given upon quest completion.
+
+- **`npc: Instance?`**  
+  The NPC associated with the quest, if any.
+
+- **`Initialize: (QuestData, Add) -> ()`**  
+  A function to initialize the quest, given the quest data and an Add function for managing bin items.
+
+#### Returns
+
+- **`(Player) -> Quest`**  
+  A function that, when called with a player, returns a Quest object associated with that player.
+
+## Example Usage
 
 ```lua
-local Players = game:GetService("Players")
-local Quest = require(Quest)
-local QuestUtil = require(QuestUtil) --Quest util is ideally something you have in your game, with a bunch of utility functions and signals. 
+local NewQuest = require(Quest) -- remember, Quest module isn't anything fancy, its just a factory function for creating a quest.
+local Bandit = require(Bandit)
 
-local function KillBanditsQuest(player)
-	local rewards: { Quest.Rewards } = {
-		QuestUtil.Rewards.GiveCredits("Get 100 Credits", 100),
-	}
+QuestUtil.BanditKilled = Bandit.BanditKilled
 
-	local quest = Quest.NewQuest("Kill the Bandits!", 1, rewards, workspace.FrescoAI, function(questData, binAdd)
-		binAdd(QuestUtil.MobKilled:Connect(function(_killedMob, _killer) 
-			questData.UpdateProgress(questData.progress + 1)
+function QuestUtil.NewBanditQuest(
+	displayName: string,
+	count: number,
+	BanditFilter: (BanditTypes.AI) -> boolean,
+	rewards: { Reward }
+)
+	return NewQuest(displayName, count, rewards, function(data, binAdd)
+		binAdd(QuestUtil.BanditKilled:Connect(function(killedBandit, killer)
+			if killer and killer == data.player.Character and BanditFilter(killedBandit) then
+				data.IncrementProgress(1)
+			end
 		end))
 	end)
+end
+```
 
-	return quest(player)
+```lua
+--store ur rewards somewhere
+local Rewards = {}
+
+type Reward = QuestTypes.Reward -- probably have a quest types module that exports all ur quest types. this module exports a few already.
+
+function Rewards.GiveCredits(amount: number): Reward
+	return {
+		name = `Get {amount} credits`,
+		Apply = function(player)
+			DataService.WriteData(player, function(data)
+				data.credits += amount
+			end)
+		end,
+	}
 end
 
-Players.PlayerAdded:Connect(function(player)
-	local quest = KillBanditsQuest(player)
-	quest.Start()
-	quest.data.ProgressChanged:Connect(function(progress) --Quest exposes a progress changed signal that will only fire if you use the quest's mutator method.
-		if progress >= quest.data.target then
-			quest.Complete() -- completion is not automatically detected as some people want players to "return" their quests.
-		end
-	end)
-end)
+return Rewards
+```
+
+```lua
+--create it!
+local Rewards = require(Rewards)
+local QuestUtil = require(QuestUtil)
+
+return QuestUtil.NewBanditQuest("Kill the Bandits!", 1, function(ai)
+	return ai.model.Name == "Bandit"
+end, { Rewards.GiveCredits(100) })
 ```
