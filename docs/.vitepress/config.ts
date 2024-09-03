@@ -11,9 +11,9 @@ function sidebar() {
 }
 
 export default defineConfig({
-  base: '/RobloxLibs/',
-  title: 'RobloxLibs',
-  description: 'A collection of libraries to speed up roblox development.',
+  base: '/Schlop/',
+  title: 'Schlop',
+  description: 'Schlop on deez',
   lang: 'en-US',
   head: [
     // ['link', { rel: 'icon', href: '/favicon.png' }],
@@ -23,7 +23,7 @@ export default defineConfig({
     // siteTitle: false,
     outline: 'deep',
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/Parihsz/RobloxLibs' },
+      { icon: 'github', link: 'https://github.com/Parihsz/Schlop' },
     ],
     nav: [
       { text: 'Installing', link: '/installing' },
