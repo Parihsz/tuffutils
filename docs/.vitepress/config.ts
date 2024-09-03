@@ -13,7 +13,7 @@ function sidebar() {
 export default defineConfig({
   base: '/Schlop/',
   title: 'Schlop',
-  description: 'Schlop on deez',
+  description: 'Schlop',
   lang: 'en-US',
   head: [
     // ['link', { rel: 'icon', href: '/favicon.png' }],
