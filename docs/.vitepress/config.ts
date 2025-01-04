@@ -6,7 +6,6 @@ function sidebar() {
     { text: 'Grid', link: '/Grid' },
     { text: 'Quest', link: '/Quest' },
     { text: 'Test', link: '/Test' },
-    { text: 'Tween', link: '/Tween' },
   ]
 }
 

@@ -4,28 +4,28 @@
 type Entity = Model
 type Entities = { [Entity]: string }
 type GridCell = { [string]: { Entity } }
-type Grid = { [Vector3]: GridCell }
+type Grid = { [vector]: GridCell }
 
 local Grid = {}
 
 local GRID_SIZE = 50
 local UPDATE_INTERVAL = 2
 
-local lastPositions: { [Entity]: Vector3 } = {}
+local lastPositions: { [Entity]: vector } = {}
 local lastUpdate = 0
 
 local grid: Grid = {}
 local entities: Entities = {}
 
-local function HashPosition(position: Vector3): Vector3
-	return Vector3.new(position.X // GRID_SIZE + 0.5, 0, position.Z // GRID_SIZE + 0.5)
+local function HashPosition(position: vector): vector
+	return vector.create(math.floor(position.x / GRID_SIZE + 0.5), 0, math.floor(position.z / GRID_SIZE + 0.5))
 end
 
-local function MagnitudeSquared(position: Vector3): number
-	return position.X * position.X + position.Y * position.Y + position.Z * position.Z
+local function DotMagnitude(position: vector): number
+	return vector.dot(position, position)
 end
 
-local function RemoveOld(entity: Entity, entityType: string, lastHash: Vector3)
+local function RemoveOld(entity: Entity, entityType: string, lastHash: vector)
 	local oldCell = grid[lastHash]
 	if not oldCell then
 		return
@@ -45,7 +45,7 @@ local function RemoveOld(entity: Entity, entityType: string, lastHash: Vector3)
 	end
 end
 
-local function AddNew(entity: Entity, entityType: string, hash: Vector3)
+local function AddNew(entity: Entity, entityType: string, hash: vector)
 	local cell: GridCell = grid[hash] or {}
 	cell[entityType] = cell[entityType] or {}
 	grid[hash] = cell
@@ -61,7 +61,7 @@ function Grid.UpdateGrid()
 	end
 
 	for entity, entityType in entities do
-		local position = entity:GetPivot().Position
+		local position = entity:GetPivot().Position :: any -- Suppress linting here
 		local hash = HashPosition(position)
 		local lastHash = lastPositions[entity]
 
@@ -79,12 +79,13 @@ end
 
 local function ProcessEntities(
 	entitiesTable: { Entity },
-	position: Vector3,
+	position: vector,
 	rangeSquared: number,
 	nearbyEntities: { Entity }
 )
 	for _, entity in entitiesTable do
-		if MagnitudeSquared(entity:GetPivot().Position - position) <= rangeSquared then
+		local entityPosition = entity:GetPivot().Position :: any -- Suppress linting here
+		if DotMagnitude(entityPosition - position) <= rangeSquared then
 			table.insert(nearbyEntities, entity)
 		end
 	end
@@ -93,7 +94,7 @@ end
 local function ProcessCell(
 	cell: GridCell,
 	entityTypes: { string }?,
-	position: Vector3,
+	position: vector,
 	rangeSquared: number,
 	nearbyEntities: { Entity }
 )
@@ -111,20 +112,20 @@ local function ProcessCell(
 	end
 end
 
-function Grid.QueryGrid(position: Vector3, range: number, entityTypes: { string }?): { Entity }
+function Grid.QueryGrid(position: vector, range: number, entityTypes: { string }?): { Entity }
 	Grid.UpdateGrid()
 
 	local rangeInCells = math.ceil(range / GRID_SIZE)
 	local hash = HashPosition(position)
-	local startX, startZ = hash.X - rangeInCells, hash.Z - rangeInCells
-	local endX, endZ = hash.X + rangeInCells, hash.Z + rangeInCells
+	local startX, startZ = hash.x - rangeInCells, hash.z - rangeInCells
+	local endX, endZ = hash.x + rangeInCells, hash.z + rangeInCells
 
 	local nearbyEntities: { Entity } = {}
 	local rangeSquared = range * range
 
 	for xCell = startX, endX do
 		for zCell = startZ, endZ do
-			local cellKey = Vector3.new(xCell, 0, zCell)
+			local cellKey = vector.create(xCell, 0, zCell)
 			local cell = grid[cellKey]
 			if cell then
 				ProcessCell(cell, entityTypes, position, rangeSquared, nearbyEntities)
@@ -149,7 +150,8 @@ function Grid.GetNearbyEntities(model: Model?, range: number, entityTypes: { str
 		warn("Model is nil")
 		return {}
 	end
-	return Grid.QueryGrid(model:GetPivot().Position, range, entityTypes)
+	local position = model:GetPivot().Position :: any
+	return Grid.QueryGrid(position, range, entityTypes)
 end
 
 return Grid

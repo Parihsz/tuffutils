@@ -30,7 +30,4 @@ features:
     details: Library to test, check, benchmark and race your functions.
     link: /Test
   - icon: 🍃
-    title: Tween
-    details: Utility module for creating and managing tweens for UI elements.
-    link: /Tween
 ---

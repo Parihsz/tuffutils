@@ -128,10 +128,13 @@ local function NewQuest(
 			status = "InProgress",
 			state = "Active",
 			rewards = rewards,
+
 			npc = npc,
 			connections = {},
+
 			ProgressChanged = progressChanged,
 			StateChanged = stateChanged,
+
 			UpdateProgress = UpdateProgress,
 			IncrementProgress = IncrementProgress,
 			GetProgress = GetProgress,
