@@ -29,5 +29,4 @@ features:
     title: Test
     details: Library to test, check, benchmark and race your functions.
     link: /Test
-  - icon: 🍃
 ---
