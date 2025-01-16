@@ -18,7 +18,7 @@ local grid: Grid = {}
 local entities: Entities = {}
 
 local function HashPosition(position: vector): vector
-	return vector.create(math.floor(position.x / GRID_SIZE + 0.5), 0, math.floor(position.z / GRID_SIZE + 0.5))
+	return vector.create(position.x // GRID_SIZE + 0.5, 0, position.z // GRID_SIZE + 0.5)
 end
 
 local function DotMagnitude(position: vector): number
@@ -61,7 +61,7 @@ function Grid.UpdateGrid()
 	end
 
 	for entity, entityType in entities do
-		local position = entity:GetPivot().Position :: any -- Suppress linting here
+		local position = entity:GetPivot().Position :: any
 		local hash = HashPosition(position)
 		local lastHash = lastPositions[entity]
 
@@ -84,7 +84,7 @@ local function ProcessEntities(
 	nearbyEntities: { Entity }
 )
 	for _, entity in entitiesTable do
-		local entityPosition = entity:GetPivot().Position :: any -- Suppress linting here
+		local entityPosition = entity:GetPivot().Position :: any
 		if DotMagnitude(entityPosition - position) <= rangeSquared then
 			table.insert(nearbyEntities, entity)
 		end
