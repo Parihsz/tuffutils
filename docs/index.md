@@ -25,6 +25,10 @@ features:
     title: Quest
     details: Manages quests for players, supporting progress tracking and completion.
     link: /Quest
+  - icon: ⌛
+    title: Snapshots
+    details: System for managing and interpolating snapshots for networking systems.
+    link: /Snapshots
   - icon: ⚡
     title: Test
     details: Library to test, check, benchmark and race your functions.
