@@ -1,6 +1,6 @@
 # Snapshots
 
-This module provides functionality to manage and interpolate snapshots for networking systems. It supports efficient insertion, retrieval, and interpolation of snapshots, making it ideal for real-time applications like replication.
+This module provides functionality to manage and interpolate snapshots for networking systems. It supports efficient insertion, retrieval, and interpolation of snapshots.
 
 ## Types
 
