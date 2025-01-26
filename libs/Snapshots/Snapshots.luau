@@ -16,7 +16,7 @@ export type SnapshotInstance = {
 	GetBefore: (self: SnapshotInstance, timeStamp: number) -> SnapshotData?,
 	GetAfter: (self: SnapshotInstance, timeStamp: number) -> SnapshotData?,
 	GetAt: (self: SnapshotInstance, timeStamp: number) -> CFrame?,
-	Remove: (self: SnapshotInstance, cutoffTime: number) -> (),
+	RemoveOld: (self: SnapshotInstance, cutoffTime: number) -> (),
 	Destroy: (self: SnapshotInstance) -> (),
 	Subject: Player?,
 }
@@ -93,7 +93,7 @@ local function GetAt(self: SnapshotInstance, timeStamp: number, currentCFrame: C
 	return nil
 end
 
-local function Remove(self: SnapshotInstance, cutoffTime: number): ()
+local function RemoveOld(self: SnapshotInstance, cutoffTime: number): ()
 	local cache = self.cache
 	while #cache > 0 and cache[1].timeStamp < cutoffTime do
 		table.remove(cache, 1)
@@ -113,7 +113,7 @@ function Snapshot.new(subject: Player): SnapshotInstance
 		GetBefore = GetBefore,
 		GetAfter = GetAfter,
 		GetAt = GetAt,
-		Remove = Remove,
+		RemoveOld = RemoveOld,
 		Destroy = Destroy,
 		Subject = subject,
 	}
