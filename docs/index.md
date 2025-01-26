@@ -17,6 +17,10 @@ features:
     title: State
     details: A lightweight state machine implementation for managing states and networking.
     link: /State
+  - icon: ⌛
+    title: Snapshots
+    details: System for managing and interpolating snapshots for networking systems.
+    link: /Snapshots
   - icon: ✖️
     title: Grid
     details: Manages various entity positions on a grid using spatial hashing.
@@ -25,10 +29,6 @@ features:
     title: Quest
     details: Manages quests for players, supporting progress tracking and completion.
     link: /Quest
-  - icon: ⌛
-    title: Snapshots
-    details: System for managing and interpolating snapshots for networking systems.
-    link: /Snapshots
   - icon: ⚡
     title: Test
     details: Library to test, check, benchmark and race your functions.

@@ -7,11 +7,12 @@ local Snapshot = {}
 
 export type SnapshotData = {
 	timeStamp: number,
-	position: CFrame,
+	cFrame: CFrame,
 }
 
 export type SnapshotInstance = {
-	PushAt: (self: SnapshotInstance, timeStamp: number, position: CFrame) -> (),
+	cache: { SnapshotData },
+	PushAt: (self: SnapshotInstance, timeStamp: number, cFrame: CFrame) -> (),
 	GetBefore: (self: SnapshotInstance, timeStamp: number) -> SnapshotData?,
 	GetAfter: (self: SnapshotInstance, timeStamp: number) -> SnapshotData?,
 	GetAt: (self: SnapshotInstance, timeStamp: number) -> CFrame?,
@@ -35,62 +36,67 @@ local function BinarySearch(cache: { SnapshotData }, timeStamp: number): number
 	return low
 end
 
+local function PushAt(self: SnapshotInstance, timeStamp: number, cFrame: CFrame): ()
+	local cache = self.cache
+	local index = BinarySearch(cache, timeStamp)
+	table.insert(cache, index, { timeStamp = timeStamp, cFrame = cFrame })
+
+	if #cache > MAX_LENGTH then
+		table.remove(cache, 1)
+	end
+end
+
+local function GetBefore(self: SnapshotInstance, timeStamp: number): SnapshotData?
+	local cache = self.cache
+	local index = BinarySearch(cache, timeStamp) - 1
+	if index >= 1 then
+		return cache[index]
+	end
+	return nil
+end
+
+local function GetAfter(self: SnapshotInstance, timeStamp: number): SnapshotData?
+	local cache = self.cache
+	local index = BinarySearch(cache, timeStamp)
+	if index <= #cache then
+		return cache[index]
+	end
+	return nil
+end
+
+local function GetAt(self: SnapshotInstance, timeStamp: number): CFrame?
+	local cache = self.cache
+	if #cache == 0 then
+		return nil
+	end
+	if #cache == 1 then
+		return cache[1].cFrame
+	end
+
+	local before = self:GetBefore(timeStamp)
+	local after = self:GetAfter(timeStamp)
+
+	if before and after then
+		local alpha = (timeStamp - before.timeStamp) / (after.timeStamp - before.timeStamp)
+		return before.cFrame:Lerp(after.cFrame, alpha)
+	elseif before then
+		return before.cFrame
+	elseif after then
+		return after.cFrame
+	end
+
+	return nil
+end
+
 function Snapshot.new(subject: Player): SnapshotInstance
 	local cache: { SnapshotData } = {}
-
-	local function PushAt(self: SnapshotInstance, timeStamp: number, position: CFrame): ()
-		local index = BinarySearch(cache, timeStamp)
-		table.insert(cache, index, { timeStamp = timeStamp, position = position })
-
-		if #cache > MAX_LENGTH then
-			table.remove(cache, 1)
-		end
-	end
-
-	local function GetBefore(self: SnapshotInstance, timeStamp: number): SnapshotData?
-		local index = BinarySearch(cache, timeStamp) - 1
-		if index >= 1 then
-			return cache[index]
-		end
-		return nil
-	end
-
-	local function GetAfter(self: SnapshotInstance, timeStamp: number): SnapshotData?
-		local index = BinarySearch(cache, timeStamp)
-		if index <= #cache then
-			return cache[index]
-		end
-		return nil
-	end
-
-	local function GetAt(self: SnapshotInstance, timeStamp: number): CFrame?
-		if #cache == 0 then
-			return nil
-		end
-		if #cache == 1 then
-			return cache[1].position
-		end
-
-		local before = self:GetBefore(timeStamp)
-		local after = self:GetAfter(timeStamp)
-
-		if before and after then
-			local alpha = (timeStamp - before.timeStamp) / (after.timeStamp - before.timeStamp)
-			return before.position:Lerp(after.position, alpha)
-		elseif before then
-			return before.position
-		elseif after then
-			return after.position
-		end
-
-		return nil
-	end
 
 	local function Destroy(): ()
 		table.clear(cache)
 	end
 
 	return {
+		cache = cache,
 		PushAt = PushAt,
 		GetBefore = GetBefore,
 		GetAfter = GetAfter,
