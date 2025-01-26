@@ -24,6 +24,9 @@ Represents an instance of a snapshot manager for a specific subject.
 
 #### Properties
 
+- **`cache: { SnapshotData }`**  
+  A table containing the cached snapshot data. The cache is maintained in chronological order and automatically pruned.
+
 - **`Subject: Player?`**  
   The player or subject associated with the snapshot instance.
 
@@ -40,6 +43,9 @@ Represents an instance of a snapshot manager for a specific subject.
 
 - **`GetAt(timeStamp: number) -> CFrame?`**  
   Interpolates and returns the position at the specified timestamp. If no interpolation is possible, returns `nil`.
+
+- **`RemoveOld(cutoffTime: number) -> ()`**  
+  Removes all snapshots in the cache that are older than the specified `cutoffTime`. 
 
 - **`Destroy() -> ()`**  
   Cleans up the snapshot instance, clearing all associated data.
