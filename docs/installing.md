@@ -10,7 +10,6 @@ State = "parihsz/state@^1.0.2"
 Grid = "parihsz/grid@^1.0.5"
 Quest = "parihsz/quest@^1.0.6"
 Snapshots = "parihsz/snapshots@^0.0.4"
-Test = "parihsz/test@^1.0.6"
 ```
 
 :::

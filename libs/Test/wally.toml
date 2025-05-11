@@ -1,7 +1,0 @@
-[package]
-name = "parihsz/test"
-version = "1.0.6"
-registry = "https://github.com/UpliftGames/wally-index"
-realm = "shared"
-
-[dependencies]
