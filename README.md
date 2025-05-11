@@ -1,5 +1,5 @@
-# [View Docs](https://parihsz.github.io/Schlop/)
-Schlop is a collection of reusable modules I created while developing my game.
+# [View Docs](https://parihsz.github.io/tuffutils/)
+tuffutils is a collection of reusable modules I created while developing my game.
 They are: 
 * Lightweight. They are single file modules. Some contain red blox dependencies that you can easily swap out.
 * The libraries are written to be concise and easy to read, allowing for easy customization.

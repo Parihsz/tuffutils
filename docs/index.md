@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: Schlop
+  name: tuffutils
   text: A collection of libraries to speed up development.
   actions:
     - theme: brand
@@ -10,7 +10,7 @@ hero:
       link: /installing
     - theme: alt
       text: View on GitHub
-      link: https://github.com/Parihsz/Schlop
+      link: https://github.com/Parihsz/tuffutils
 
 features:
   - icon: 🤖

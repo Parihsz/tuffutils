@@ -11,9 +11,9 @@ function sidebar() {
 }
 
 export default defineConfig({
-  base: '/Schlop/',
-  title: 'Schlop',
-  description: 'Schlop',
+  base: '/tuffutils/',
+  title: 'tuffutils',
+  description: 'tuffutils',
   lang: 'en-US',
   head: [
     // ['link', { rel: 'icon', href: '/favicon.png' }],
@@ -23,7 +23,7 @@ export default defineConfig({
     // siteTitle: false,
     outline: 'deep',
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/Parihsz/Schlop' },
+      { icon: 'github', link: 'https://github.com/Parihsz/tuffutils' },
     ],
     nav: [
       { text: 'Installing', link: '/installing' },
